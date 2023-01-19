@@ -1,6 +1,6 @@
 import './src/libs/dayjs';
 import { useCallback } from 'react';
-import { View, StatusBar } from 'react-native';
+import { View, StatusBar, Text } from 'react-native';
 import {
   useFonts,
   Inter_400Regular,
@@ -11,6 +11,7 @@ import {
 import * as SplashScreen from 'expo-splash-screen';
 
 import { Home } from './src/screens/Home';
+import { Routes } from './src/routes';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -33,9 +34,13 @@ export default function App() {
   }
 
   return (
-    <View onLayout={onLayoutRootView}>
-      <Home />
-      <StatusBar barStyle="default" backgroundColor="transparent" translucent />
-    </View>
+    <>
+      <Routes onLayout={onLayoutRootView} />
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="transparent"
+        translucent
+      />
+    </>
   );
 }
