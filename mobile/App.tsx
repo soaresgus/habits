@@ -1,5 +1,6 @@
+import './src/libs/dayjs';
 import { useCallback } from 'react';
-import { StyleSheet, Text, View, StatusBar } from 'react-native';
+import { View, StatusBar } from 'react-native';
 import {
   useFonts,
   Inter_400Regular,
@@ -8,6 +9,8 @@ import {
   Inter_800ExtraBold,
 } from '@expo-google-fonts/inter';
 import * as SplashScreen from 'expo-splash-screen';
+
+import { Home } from './src/screens/Home';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -30,18 +33,9 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container} onLayout={onLayoutRootView}>
-      <Text>Hello world!</Text>
+    <View onLayout={onLayoutRootView}>
+      <Home />
       <StatusBar barStyle="default" backgroundColor="transparent" translucent />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#7f7f7f',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
