@@ -1,16 +1,25 @@
 import * as Popover from '@radix-ui/react-popover';
 import { useState } from 'react';
-import { ProgressBar } from './ProgressBar';
 import clsx from 'clsx';
+import dayjs from 'dayjs';
+import { ProgressBar } from './ProgressBar';
+import { Checkbox } from './Checkbox';
 interface IHabitDayProps {
-  amount: number;
-  completed: number;
+  amount?: number;
+  completed?: number;
+  date: Date;
 }
 
-export function HabitDay({ amount, completed }: IHabitDayProps) {
+export function HabitDay({ amount = 0, completed = 0, date }: IHabitDayProps) {
   const [active, setActive] = useState(false);
 
-  const completedPercentage = Math.round((completed / amount) * 100);
+  const weekDay = dayjs(date).format('dddd');
+  const dayAndMonth = dayjs(date).format('DD/MM');
+
+  const completedPercentage =
+    amount > 0 ? Math.round((completed / amount) * 100) : 0;
+
+  async function getHabitsByDate() {}
 
   return (
     <Popover.Root onOpenChange={(open) => setActive(open)}>
@@ -36,15 +45,32 @@ export function HabitDay({ amount, completed }: IHabitDayProps) {
 
       <Popover.Portal>
         <Popover.Content
-          className="min-w-[320px] p-6 rounded-2xl bg-zinc-900 flex flex-col animate-showModal data-[state=closed]:animate-closeModal"
+          className="min-w-[320px] max-w-[374px] p-6 rounded-2xl bg-zinc-900 flex flex-col animate-showPopover data-[state=closed]:animate-closePopover"
           side="left"
         >
-          <span className="font-semibold text-zinc-400">terça-feira</span>
+          <span className="font-semibold text-zinc-400">{weekDay}</span>
           <span className="mt-1 font-extrabold leading-tight text-3xl">
-            17/01
+            {dayAndMonth}
           </span>
 
           <ProgressBar progress={completedPercentage} />
+
+          <div className="mt-6 flex flex-col gap-3">
+            {amount > 0 ? (
+              <Checkbox
+                title="Beber 2L de água"
+                labelExtraClassName="peer-data-[state=checked]:line-through peer-data-[state=checked]:text-zinc-400 font-semibold text-xl "
+              />
+            ) : (
+              <span className="text-zinc-400 cursor-pointer">
+                Você ainda não está monitorando nenhum hábito, comece{' '}
+                <span className="text-violet-400 underline">
+                  cadastrando um
+                </span>
+                .
+              </span>
+            )}
+          </div>
 
           <Popover.Arrow height={8} width={16} className="fill-zinc-900" />
         </Popover.Content>
