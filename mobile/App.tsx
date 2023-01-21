@@ -1,6 +1,7 @@
 import './src/libs/dayjs';
 import { useCallback } from 'react';
-import { View, StatusBar, Text } from 'react-native';
+import { StatusBar } from 'react-native';
+import { Provider as PaperProvider } from 'react-native-paper';
 import {
   useFonts,
   Inter_400Regular,
@@ -12,10 +13,13 @@ import * as SplashScreen from 'expo-splash-screen';
 
 import { Home } from './src/screens/Home';
 import { Routes } from './src/routes';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
+  const queryClient = new QueryClient();
+
   const [fontsLoaded] = useFonts({
     Inter_400Regular,
     Inter_600SemiBold,
@@ -34,13 +38,15 @@ export default function App() {
   }
 
   return (
-    <>
-      <Routes onLayout={onLayoutRootView} />
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor="transparent"
-        translucent
-      />
-    </>
+    <QueryClientProvider client={queryClient}>
+      <PaperProvider>
+        <Routes onLayout={onLayoutRootView} />
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor="transparent"
+          translucent
+        />
+      </PaperProvider>
+    </QueryClientProvider>
   );
 }

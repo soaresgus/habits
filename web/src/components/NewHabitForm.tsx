@@ -32,7 +32,6 @@ export function NewHabitForm() {
     register,
     control,
     formState: { errors },
-    reset,
   } = useForm<IFormInputs>();
 
   const { isLoading, mutateAsync, isSuccess } = useMutation({
@@ -74,9 +73,9 @@ export function NewHabitForm() {
         className="p-4 rounded-lg mt-3 bg-zinc-800 text-white placeholder:text-zinc-400"
         {...register('commitment', { required: 'Campo obrigatório' })}
       />
-      <span className="mt-2 text-red-500">
-        {errors.commitment && errors.commitment.message}
-      </span>
+      {errors.commitment && (
+        <span className="mt-2 text-red-500">{errors.commitment.message}</span>
+      )}
 
       <label htmlFor="" className="font-semibold leading-tight mt-4">
         Qual a recorrência?
@@ -84,9 +83,9 @@ export function NewHabitForm() {
 
       <div className="flex flex-col gap-2 mt-3">
         <Checkboxes control={control} name="weekDays" options={weekDays} />
-        <span className="mt-2 text-red-500">
-          {errors.weekDays && errors.weekDays.message}
-        </span>
+        {errors.weekDays && (
+          <span className="mt-2 text-red-500">{errors.weekDays.message}</span>
+        )}
       </div>
 
       <button
