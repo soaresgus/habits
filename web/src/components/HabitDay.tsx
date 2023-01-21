@@ -3,15 +3,21 @@ import { useState } from 'react';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { ProgressBar } from './ProgressBar';
-import { Checkbox } from './Checkbox';
+import { HabitsList } from './HabitsList';
+
 interface IHabitDayProps {
   amount?: number;
-  completed?: number;
+  defaultCompleted?: number;
   date: Date;
 }
 
-export function HabitDay({ amount = 0, completed = 0, date }: IHabitDayProps) {
+export function HabitDay({
+  amount = 0,
+  defaultCompleted = 0,
+  date,
+}: IHabitDayProps) {
   const [active, setActive] = useState(false);
+  const [completed, setCompleted] = useState(defaultCompleted);
 
   const weekDay = dayjs(date).format('dddd');
   const dayAndMonth = dayjs(date).format('DD/MM');
@@ -19,13 +25,15 @@ export function HabitDay({ amount = 0, completed = 0, date }: IHabitDayProps) {
   const completedPercentage =
     amount > 0 ? Math.round((completed / amount) * 100) : 0;
 
-  async function getHabitsByDate() {}
+  function handleCompletedChanged(completed: number) {
+    setCompleted(completed);
+  }
 
   return (
     <Popover.Root onOpenChange={(open) => setActive(open)}>
       <Popover.Trigger
         className={clsx(
-          'w-10 h-10 bg-zinc-900 border-2 border-zinc-800 rounded-lg transition-all',
+          'w-10 h-10 bg-zinc-900 border-2 border-zinc-800 rounded-lg transition-all  focus:outline-none focus:ring-2 focus:ring-violet-800 focus:ring-offset-2 focus:ring-offset-background',
           {
             'bg-zinc-900 border-zinc-800': completedPercentage === 0,
             'bg-violet-900 border-violet-700':
@@ -55,22 +63,7 @@ export function HabitDay({ amount = 0, completed = 0, date }: IHabitDayProps) {
 
           <ProgressBar progress={completedPercentage} />
 
-          <div className="mt-6 flex flex-col gap-3">
-            {amount > 0 ? (
-              <Checkbox
-                title="Beber 2L de água"
-                labelExtraClassName="peer-data-[state=checked]:line-through peer-data-[state=checked]:text-zinc-400 font-semibold text-xl "
-              />
-            ) : (
-              <span className="text-zinc-400 cursor-pointer">
-                Você ainda não está monitorando nenhum hábito, comece{' '}
-                <span className="text-violet-400 underline">
-                  cadastrando um
-                </span>
-                .
-              </span>
-            )}
-          </div>
+          <HabitsList date={date} onCompletedChanged={handleCompletedChanged} />
 
           <Popover.Arrow height={8} width={16} className="fill-zinc-900" />
         </Popover.Content>

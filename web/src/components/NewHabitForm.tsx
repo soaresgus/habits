@@ -70,7 +70,7 @@ export function NewHabitForm() {
         id="title"
         placeholder="Ex.: Exercícios, dormir bem, etc..."
         autoFocus
-        className="p-4 rounded-lg mt-3 bg-zinc-800 text-white placeholder:text-zinc-400"
+        className="p-4 rounded-lg mt-3 bg-zinc-800 text-white placeholder:text-zinc-400 transition-all focus:outline-none focus:ring-2 focus:ring-violet-800 focus:ring-offset-2 focus:ring-offset-zinc-900"
         {...register('commitment', { required: 'Campo obrigatório' })}
       />
       {errors.commitment && (
@@ -92,7 +92,7 @@ export function NewHabitForm() {
         type="submit"
         disabled={isLoading}
         className={clsx(
-          'mt-6 rounded-lg p-4 gap-3 flex items-center justify-center font-semibold bg-green-600 hover:bg-green-500',
+          'mt-6 rounded-lg p-4 gap-3 flex items-center justify-center font-semibold bg-green-600 hover:bg-green-500 transition-colors focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-zinc-900 transition-all',
           {
             'bg-green-800 hover:bg-green-800 hover:cursor-not-allowed':
               isLoading,
