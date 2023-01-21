@@ -1,5 +1,5 @@
 import { View, Text, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
 
@@ -7,6 +7,7 @@ import { api } from '../libs/axios';
 import { Header } from '../components/Header';
 import { HabitDay, daySize } from '../components/HabitDay';
 import { generateDatesFromYearBeginning } from '../utils/generate-dates-from-year-beginning';
+import { useCallback } from 'react';
 
 const weekDays = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 const datesFromYearStart = generateDatesFromYearBeginning();
@@ -22,9 +23,16 @@ interface ISummaryData {
 export function Home() {
   const { navigate } = useNavigation();
 
-  const { data: summary, isSuccess } = useQuery<ISummaryData[]>(
-    ['summary'],
-    () => getSummary()
+  const {
+    data: summary,
+    isSuccess,
+    refetch,
+  } = useQuery<ISummaryData[]>(['summary'], () => getSummary());
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [])
   );
 
   async function getSummary() {
