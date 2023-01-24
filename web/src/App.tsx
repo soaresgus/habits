@@ -1,7 +1,7 @@
 import './libs/dayjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Header } from './components/Header';
-import { SummaryTable } from './components/SummaryTable';
+import { Header } from './components/Header/Header';
+import { SummaryTable } from './components/Summary/SummaryTable';
 import './styles/global.css';
 
 export function App() {

@@ -14,7 +14,7 @@ export function Checkbox({
   return (
     <div className="flex items-center gap-3">
       <CheckboxPrimitive.Root
-        className="flex items-center justify-center h-8 w-8 rounded-lg bg-zinc-900 border-2 border-zinc-800 peer group transition-all disabled:cursor-not-allowed data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500  focus:outline-none focus:ring-2 focus:ring-violet-800 focus:ring-offset-2 focus:ring-offset-background"
+        className="flex items-center justify-center h-8 w-8 rounded-lg bg-zinc-900 border-2 border-zinc-800 peer group transition-all disabled:cursor-not-allowed data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500  focus:outline-none focus:ring-2 focus:ring-blue-800 focus:ring-offset-2 focus:ring-offset-background"
         id={title}
         {...props}
       >

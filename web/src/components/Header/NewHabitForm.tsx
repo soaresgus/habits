@@ -2,9 +2,9 @@ import { useMutation } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { Check, CheckCircle } from 'phosphor-react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { api } from '../libs/aixos';
-import { Checkbox } from './Checkbox';
-import { Checkboxes } from './Checkboxes';
+import { api } from '../../libs/aixos';
+import { Checkboxes } from '../General/Checkboxes';
+import { Input } from '../General/Input';
 
 const weekDays = [
   'Domingo',
@@ -29,7 +29,6 @@ interface INewHabitData {
 export function NewHabitForm() {
   const {
     handleSubmit,
-    register,
     control,
     formState: { errors },
   } = useForm<IFormInputs>();
@@ -62,17 +61,23 @@ export function NewHabitForm() {
       className="w-full flex flex-col mt-6"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <label htmlFor="title" className="font-semibold leading-tight">
-        Qual seu comprometimento?
-      </label>
-      <input
-        type="text"
-        id="title"
-        placeholder="Ex.: Exercícios, dormir bem, etc..."
-        autoFocus
-        className="p-4 rounded-lg mt-3 bg-zinc-800 text-white placeholder:text-zinc-400 transition-all focus:outline-none focus:ring-2 focus:ring-violet-800 focus:ring-offset-2 focus:ring-offset-zinc-900"
-        {...register('commitment', { required: 'Campo obrigatório' })}
+      <Controller
+        name="commitment"
+        control={control}
+        rules={{ required: 'Campo obrigatário' }}
+        render={({ field }) => (
+          <Input
+            type="text"
+            id="title"
+            placeholder="Ex.: Exercícios, dormir bem, etc..."
+            autoFocus
+            label="Qual seu comprometimento?"
+            labelExtraStyles="font-semibold leading-tight mb-3"
+            {...field}
+          />
+        )}
       />
+
       {errors.commitment && (
         <span className="mt-2 text-red-500">{errors.commitment.message}</span>
       )}

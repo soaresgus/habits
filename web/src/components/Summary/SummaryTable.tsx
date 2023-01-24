@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { api } from '../libs/aixos';
+import { api } from '../../libs/aixos';
 import colors from 'tailwindcss/colors';
 import Skeleton from 'react-loading-skeleton';
 import dayjs from 'dayjs';
 import { HabitDay } from './HabitDay';
-import { generateDatesFromYearBeginning } from '../utils/generate-dates-from-year-beginning';
+import { generateDatesFromYearBeginning } from '../../utils/generate-dates-from-year-beginning';
 
 import 'react-loading-skeleton/dist/skeleton.css';
 
@@ -12,7 +12,7 @@ const weekDays = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
 const summaryDates = generateDatesFromYearBeginning();
 
-const minimumSummaryDatesSize = 18 * 7; // 18 week = 126 days
+const minimumSummaryDatesSize = 19 * 7; // 18 week = 126 days
 const amountOfDaysToFill = minimumSummaryDatesSize - summaryDates.length;
 
 interface ISummaryData {
@@ -34,8 +34,8 @@ export function SummaryTable() {
   }
 
   return (
-    <div className="w-full flex">
-      <div className="grid grid-rows-7 grid-flow-row gap-3">
+    <div className="w-full max-w-[1024px] overflow-x-auto flex scrollbar-thin scrollbar-thumb-zinc-600 scrollbar-track-zinc-800 relative">
+      <div className="grid grid-rows-7 grid-flow-row gap-3 fixed bg-background z-10">
         {weekDays.map((weekDay, index) => (
           <div
             key={`${weekDay}-${index}`}
@@ -46,7 +46,7 @@ export function SummaryTable() {
         ))}
       </div>
 
-      <div className="grid grid-rows-7 grid-flow-col gap-3">
+      <div className="grid grid-rows-7 grid-flow-col gap-3 pl-14 pb-4">
         {!isSuccess ? (
           <>
             {Array.from({ length: minimumSummaryDatesSize }).map((_, index) => (

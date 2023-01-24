@@ -2,8 +2,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import Skeleton from 'react-loading-skeleton';
 import colors from 'tailwindcss/colors';
-import { api } from '../libs/aixos';
-import { Checkbox } from './Checkbox';
+import { api } from '../../libs/aixos';
+import { Checkbox } from '../General/Checkbox';
 
 interface IHabitsListProps {
   date: Date;
@@ -100,7 +100,7 @@ export function HabitsList({ date, onCompletedChanged }: IHabitsListProps) {
             : !isDateInPast && (
                 <span className="text-zinc-400 cursor-pointer">
                   Você ainda não está monitorando nenhum hábito, comece{' '}
-                  <span className="text-violet-400 underline">
+                  <span className="text-blue-400 underline">
                     cadastrando um
                   </span>
                   .

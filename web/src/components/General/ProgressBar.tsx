@@ -11,7 +11,7 @@ export function ProgressBar({ progress }: IProgressBarProps) {
       value={progress}
     >
       <Progress.Indicator
-        className={`w-full h-full bg-violet-600 rounded-xl transition-transform`}
+        className={`w-full h-full bg-blue-600 rounded-xl transition-transform`}
         style={{ transform: `translateX(-${100 - progress}%)` }}
       />
     </Progress.Root>

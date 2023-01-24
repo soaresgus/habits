@@ -2,7 +2,7 @@ import * as Popover from '@radix-ui/react-popover';
 import { useState } from 'react';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
-import { ProgressBar } from './ProgressBar';
+import { ProgressBar } from '../General/ProgressBar';
 import { HabitsList } from './HabitsList';
 
 interface IHabitDayProps {
@@ -33,18 +33,18 @@ export function HabitDay({
     <Popover.Root onOpenChange={(open) => setActive(open)}>
       <Popover.Trigger
         className={clsx(
-          'w-10 h-10 bg-zinc-900 border-2 border-zinc-800 rounded-lg transition-all  focus:outline-none focus:ring-2 focus:ring-violet-800 focus:ring-offset-2 focus:ring-offset-background',
+          'w-10 h-10 bg-zinc-900 border-2 border-zinc-800 rounded-lg transition-all  focus:outline-none focus:ring-2 focus:ring-blue-800 focus:ring-offset-2 focus:ring-offset-background',
           {
             'bg-zinc-900 border-zinc-800': completedPercentage === 0,
-            'bg-violet-900 border-violet-700':
+            'bg-blue-900 border-blue-700':
               completedPercentage > 0 && completedPercentage < 20,
-            'bg-violet-800 border-violet-600':
+            'bg-blue-800 border-blue-600':
               completedPercentage >= 20 && completedPercentage < 40,
-            'bg-violet-700 border-violet-500':
+            'bg-blue-700 border-blue-500':
               completedPercentage >= 40 && completedPercentage < 60,
-            'bg-violet-600 border-violet-400':
+            'bg-blue-600 border-blue-400':
               completedPercentage >= 60 && completedPercentage < 80,
-            'bg-violet-500 border-violet-400': completedPercentage >= 80,
+            'bg-blue-500 border-blue-400': completedPercentage >= 80,
             'border-4': active,
           }
         )}
@@ -53,7 +53,7 @@ export function HabitDay({
 
       <Popover.Portal>
         <Popover.Content
-          className="min-w-[320px] max-w-[374px] p-6 rounded-2xl bg-zinc-900 flex flex-col animate-showPopover data-[state=closed]:animate-closePopover"
+          className="min-w-[320px] max-w-[374px] p-6 rounded-2xl bg-zinc-900 flex flex-col animate-showPopover data-[state=closed]:animate-closePopover z-20"
           side="left"
         >
           <span className="font-semibold text-zinc-400">{weekDay}</span>
