@@ -28,7 +28,7 @@ export const Input = forwardRef<HTMLInputElement, IInputProps>(
           </label>
         )}
         <div
-          className={`overflow-hidden rounded-lg bg-zinc-800 text-white placeholder:text-zinc-400 transition-all [&:has(input:focus)]:outline-none [&:has(input:focus)]:ring-2 [&:has(input:focus)]:ring-blue-800 [&:has(input:focus)]:ring-offset-2 [&:has(input:focus)]:ring-offset-zinc-900 ${inputExtraStyles
+          className={`overflow-hidden rounded-lg bg-zinc-800 text-white placeholder:text-zinc-400 transition-all [&:has(input:focus)]:outline-none [&:has(input:focus)]:ring-2 [&:has(input:focus)]:ring-blue-800 [&:has(input:focus)]:ring-offset-2 [&:has(input:focus)]:ring-offset-zinc-900 flex items-center ${inputExtraStyles
             ?.split(' ')
             .filter((value) => !value.startsWith('p'))
             .join(' ')}`}

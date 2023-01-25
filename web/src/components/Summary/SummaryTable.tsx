@@ -34,8 +34,8 @@ export function SummaryTable() {
   }
 
   return (
-    <div className="w-full max-w-[1024px] overflow-x-auto flex scrollbar-thin scrollbar-thumb-zinc-600 scrollbar-track-zinc-800 relative">
-      <div className="grid grid-rows-7 grid-flow-row gap-3 fixed bg-background z-10">
+    <div className="w-full max-w-[1024px] overflow-x-auto flex scrollbar-thin scrollbar-thumb-zinc-600 scrollbar-track-zinc-800 relative pt-4">
+      <div className="grid grid-rows-7 grid-flow-row gap-2 sticky bg-background z-10 left-0 -translate-y-1">
         {weekDays.map((weekDay, index) => (
           <div
             key={`${weekDay}-${index}`}
@@ -46,7 +46,7 @@ export function SummaryTable() {
         ))}
       </div>
 
-      <div className="grid grid-rows-7 grid-flow-col gap-3 pl-14 pb-4">
+      <div className="grid grid-rows-7 grid-flow-col gap-3 pl-2 pb-4">
         {!isSuccess ? (
           <>
             {Array.from({ length: minimumSummaryDatesSize }).map((_, index) => (
