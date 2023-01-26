@@ -1,7 +1,8 @@
-import { useRef, useState, ChangeEvent } from 'react';
+import { useRef, useState, ChangeEvent, Fragment } from 'react';
 import { useTransition, animated } from '@react-spring/web';
 import { useSearch } from '../../context/SearchContext/useSearch';
-import { PossibleOperators } from '../../context/SearchContext/types';
+import { PossibleOperators, Query } from '../../context/SearchContext/types';
+import clsx from 'clsx';
 
 interface ISearchBarProps {}
 
@@ -14,28 +15,29 @@ type FilterMethod = {
 const filterMethods: FilterMethod[] = [
   {
     title: 'nome do hábito',
-    operator: 'name:',
-    example: 'name: beber 2L de água',
+    operator: 'name',
+    example: 'name beber 2L de água',
   },
-  { title: 'data', operator: 'date:', example: 'date: 20/01' },
-  { title: 'progresso', operator: 'progress:', example: 'progress: >= 50' },
+  { title: 'data', operator: 'date', example: 'date 20/01' },
+  { title: 'progresso', operator: 'progress', example: 'progress >= 50' },
   { title: 'dias incompletos', operator: 'incomplete', example: 'incomplete' },
   { title: 'dias completos', operator: 'complete', example: 'complete' },
 ];
 
 const possibleOperators: PossibleOperators[] = [
   'complete',
-  'date:',
-  'name:',
+  'date',
+  'name',
   'incomplete',
-  'progress:',
+  'progress',
 ];
 
 export function SearchBar() {
   const [filterMethodsPopoverActive, setFilterMethodsPopoverActive] =
     useState(false);
+  const [searchBarValues, setSearchBarValues] = useState<string[]>([]);
 
-  const { query, setQuery } = useSearch();
+  const { query: queryList, setQuery } = useSearch();
 
   const transition = useTransition(filterMethodsPopoverActive, {
     from: { y: 4, opacity: 0 },
@@ -46,48 +48,112 @@ export function SearchBar() {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  function handleChangeSearchInput(event: ChangeEvent<HTMLInputElement>) {
-    const inputValue = event.target.value;
+  function handleChangeSearchInput(
+    event: ChangeEvent<HTMLInputElement>,
+    searchIndex: number
+  ) {
+    const searchBarValuesCopy = searchBarValues.slice();
+    searchBarValuesCopy[searchIndex] = event.target.value;
+    const currentInputValue = searchBarValuesCopy[searchIndex];
 
-    const inputValueContainsSomeOperator = possibleOperators.some((value) =>
-      inputValue.includes(value)
-    );
+    const queryCopy = queryList.slice();
+    queryCopy[searchIndex].description = currentInputValue;
+    const currentQueryValue = queryCopy[searchIndex];
 
-    const semicolonCount = inputValue.replace(/[^;]/g, '').length;
-    const queryCopy = query;
-    const subQueryItem = { ...queryCopy[semicolonCount] };
-    subQueryItem.description = inputValue.split(';')[semicolonCount];
+    const currentInputValueContainsSomePossibleOperator =
+      possibleOperators.some((value) => currentInputValue.includes(value));
 
-    const allOperatorsORRegEx = possibleOperators.join('|');
+    if (currentInputValueContainsSomePossibleOperator) {
+      /**
+       * get possible operators string from description and set to operator
+       */
 
-    if (inputValueContainsSomeOperator) {
-      subQueryItem.description = subQueryItem.description
-        .replaceAll(new RegExp(allOperatorsORRegEx, 'gi'), '')
+      const RegExToGetOperator = `\\b(?!${possibleOperators
+        .map((value, index) =>
+          index != possibleOperators.length - 1
+            ? `(${value})\\b|`
+            : `(${value})\\b`
+        )
+        .join('')})\\w+`;
+
+      const getOperatorInDescription = currentQueryValue.description
+        .replaceAll(new RegExp(RegExToGetOperator, 'gi'), '')
         .trim()
         .toLowerCase();
+
+      const operatorInDescriptionWithoutSpecialChars =
+        getOperatorInDescription.replaceAll(/[^\w\s]/gi, '');
+
+      /**
+       * Remove all possible operators strings from description and clear current input
+       */
+
+      currentQueryValue.operator =
+        operatorInDescriptionWithoutSpecialChars as PossibleOperators;
+
+      const allOperatorsORRegEx = possibleOperators.join('|');
+
+      currentQueryValue.description = currentQueryValue.description.replaceAll(
+        new RegExp(allOperatorsORRegEx, 'gi'),
+        ''
+      );
+
+      searchBarValuesCopy[searchIndex] = '';
     }
 
-    queryCopy[semicolonCount] = subQueryItem;
-    setQuery(queryCopy);
+    if (currentInputValue.length <= 0) {
+      console.log('alo');
+    }
 
-    console.log(query);
+    const newSearchBarValue = searchBarValuesCopy;
+    const newQueryValue = queryCopy;
+
+    console.log(newQueryValue);
+
+    setQuery(newQueryValue);
+    setSearchBarValues(newSearchBarValue);
 
     setFilterMethodsPopoverActive(false);
-    inputValue.length == 0 && setFilterMethodsPopoverActive(true);
+    currentInputValue.length == 0 && setFilterMethodsPopoverActive(true);
   }
 
   return (
     <>
       <div className="w-full overflow-hidden rounded-lg bg-zinc-800 text-white placeholder:text-zinc-400 transition-all [&:has(input:focus)]:outline-none [&:has(input:focus)]:ring-2 [&:has(input:focus)]:ring-blue-800 [&:has(input:focus)]:ring-offset-2 [&:has(input:focus)]:ring-offset-zinc-900 flex items-center">
+        {queryList.map((query, index) => (
+          <Fragment key={`${query.description}_${index}`}>
+            {query.operator && (
+              <span className="ml-4 bg-zinc-900 p-1 rounded-sm text-zinc-400 [&+input]:pl-1">
+                {query.operator}:
+              </span>
+            )}
+          </Fragment>
+        ))}
         <input
-          className="w-full h-full outline-none bg-transparent p-4 "
+          className={clsx(`w-full h-full outline-none bg-transparent p-4`, {
+            'pr-0': queryList.length > 1,
+          })}
+          onFocus={() => setFilterMethodsPopoverActive(true)}
+          onBlur={() => setFilterMethodsPopoverActive(false)}
+          onChange={(event) => {
+            handleChangeSearchInput(event, 0);
+          }}
+          value={searchBarValues[0]}
+          ref={inputRef}
+        />
+
+        {/* <span className="bg-zinc-900 p-1 rounded-sm text-zinc-400 mx-1">;</span>
+        <input
+          className={clsx(`w-full h-full outline-none bg-transparent p-4`, {
+            'pr-0': query.length > 1,
+          })}
           onFocus={() => setFilterMethodsPopoverActive(true)}
           onBlur={() => setFilterMethodsPopoverActive(false)}
           onChange={(event) => {
             handleChangeSearchInput(event);
           }}
           ref={inputRef}
-        />
+        /> */}
       </div>
 
       {transition(

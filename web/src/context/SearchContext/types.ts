@@ -1,7 +1,7 @@
 export type PossibleOperators =
-  | 'name:'
-  | 'date:'
-  | 'progress:'
+  | 'name'
+  | 'date'
+  | 'progress'
   | 'incomplete'
   | 'complete';
 
