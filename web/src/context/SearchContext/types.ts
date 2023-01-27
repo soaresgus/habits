@@ -6,7 +6,7 @@ export type PossibleOperators =
   | 'complete';
 
 export type Query = {
-  operator: PossibleOperators;
+  operator?: PossibleOperators;
   description: string;
 };
 

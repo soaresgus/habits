@@ -9,9 +9,7 @@ import {
 export const SearchContext = createContext({} as ISearchContext);
 
 export function SearchProvider({ children }: ISearchProvider) {
-  const [query, setQuery] = useState<Query[]>([
-    { description: '', operator: '' as PossibleOperators },
-  ]);
+  const [query, setQuery] = useState<Query[]>([{ description: '' }]);
 
   return (
     <SearchContext.Provider value={{ query, setQuery }}>
