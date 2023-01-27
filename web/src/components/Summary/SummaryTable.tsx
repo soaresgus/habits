@@ -7,6 +7,8 @@ import { HabitDay } from './HabitDay';
 import { generateDatesFromYearBeginning } from '../../utils/generate-dates-from-year-beginning';
 
 import 'react-loading-skeleton/dist/skeleton.css';
+import { useEffect, useRef } from 'react';
+import { useSearch } from '../../context/SearchContext/useSearch';
 
 const weekDays = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
 
@@ -15,7 +17,7 @@ const summaryDates = generateDatesFromYearBeginning();
 const minimumSummaryDatesSize = 19 * 7; // 18 week = 126 days
 const amountOfDaysToFill = minimumSummaryDatesSize - summaryDates.length;
 
-interface ISummaryData {
+export interface ISummaryData {
   id: string;
   date: string;
   completed: number;
@@ -28,10 +30,40 @@ export function SummaryTable() {
     () => getSummary()
   );
 
+  const { searchQuery, setSearchMessage, searchMessage, setSearchIsError } =
+    useSearch();
+
   async function getSummary() {
     const response = await api.get('/summary');
     return (await response.data) as ISummaryData[];
   }
+
+  const searchTimeoutRef = useRef<ReturnType<typeof setInterval>>();
+  const componentInitialRender = useRef<boolean>(true);
+
+  useEffect(() => {
+    if (componentInitialRender.current) {
+      componentInitialRender.current = false;
+      return;
+    }
+    setSearchIsError(false);
+    setSearchMessage('Filtrando...');
+    const timeoutId = setTimeout(() => {
+      if (searchQuery.every((value) => value.description && value.operator)) {
+        //search
+        setSearchIsError(true);
+        setSearchMessage('Nenhum hábito encontrado para o filtro desejado.');
+      } else {
+        setSearchIsError(true);
+        setSearchMessage('Complete o filtro para realizar a busca.');
+      }
+    }, 1 * 1000 /*2 seconds*/);
+    searchTimeoutRef.current = timeoutId;
+
+    return () => {
+      clearTimeout(searchTimeoutRef.current as ReturnType<typeof setInterval>);
+    };
+  }, [searchQuery]);
 
   return (
     <div className="w-full max-w-[1024px] overflow-x-auto flex scrollbar-thin scrollbar-thumb-zinc-600 scrollbar-track-zinc-800 relative pt-4">

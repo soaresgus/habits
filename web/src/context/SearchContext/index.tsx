@@ -9,10 +9,25 @@ import {
 export const SearchContext = createContext({} as ISearchContext);
 
 export function SearchProvider({ children }: ISearchProvider) {
-  const [query, setQuery] = useState<Query[]>([{ description: '' }]);
+  const [searchQuery, setSearchQuery] = useState<Query[]>([
+    { description: '' },
+  ]);
+
+  const [searchIsError, setSearchIsError] = useState<boolean>(false);
+
+  const [searchMessage, setSearchMessage] = useState<string>('');
 
   return (
-    <SearchContext.Provider value={{ query, setQuery }}>
+    <SearchContext.Provider
+      value={{
+        searchQuery,
+        setSearchQuery,
+        searchIsError,
+        setSearchIsError,
+        searchMessage,
+        setSearchMessage,
+      }}
+    >
       {children}
     </SearchContext.Provider>
   );

@@ -11,11 +11,15 @@ export type Query = {
 };
 
 interface ISearch {
-  query: Query[];
+  searchQuery: Query[];
+  searchIsError: boolean;
+  searchMessage: string;
 }
 
 export interface ISearchContext extends ISearch {
-  setQuery(query: Query[]): void;
+  setSearchQuery(query: Query[]): void;
+  setSearchMessage(value: string): void;
+  setSearchIsError(value: boolean): void;
 }
 
 export interface ISearchProvider {

@@ -7,11 +7,9 @@ import {
   useEffect,
 } from 'react';
 import { useTransition, animated } from '@react-spring/web';
+import clsx from 'clsx';
 import { useSearch } from '../../context/SearchContext/useSearch';
 import { PossibleOperators } from '../../context/SearchContext/types';
-import clsx from 'clsx';
-
-interface ISearchBarProps {}
 
 type FilterMethod = {
   title: string;
@@ -43,16 +41,32 @@ export function SearchBar() {
   const [filterMethodsPopoverActive, setFilterMethodsPopoverActive] =
     useState(false);
   const [searchBarValues, setSearchBarValues] = useState<string[]>([]);
-  const [searchBarError, setSearchBarError] = useState<string>();
   const [selectedSearchBarInputIndex, setSelectedSearchBarInputIndex] =
     useState<number>(0);
 
-  const { query: queryList, setQuery } = useSearch();
+  const {
+    searchQuery: queryList,
+    searchIsError,
+    searchMessage,
+    setSearchQuery,
+    setSearchIsError,
+    setSearchMessage,
+  } = useSearch();
 
   const searchBarInputsRefs = useRef<HTMLInputElement[]>([]);
-  const searchBarInitialRenders = useRef<number>(2);
+  const componentInitialRender = useRef<boolean>(true);
 
-  const transition = useTransition(filterMethodsPopoverActive, {
+  const filterMethodsPopoverTransition = useTransition(
+    filterMethodsPopoverActive,
+    {
+      from: { y: 4, opacity: 0 },
+      enter: { y: 0, opacity: 1 },
+      leave: { y: 4, opacity: 0 },
+      config: { duration: 150 },
+    }
+  );
+
+  const searchMessageSpanTransition = useTransition(Boolean(searchMessage), {
     from: { y: 4, opacity: 0 },
     enter: { y: 0, opacity: 1 },
     leave: { y: 4, opacity: 0 },
@@ -60,8 +74,8 @@ export function SearchBar() {
   });
 
   useEffect(() => {
-    if (searchBarInitialRenders.current > 0) {
-      searchBarInitialRenders.current -= 1;
+    if (componentInitialRender.current) {
+      componentInitialRender.current = false;
       return;
     }
 
@@ -80,11 +94,20 @@ export function SearchBar() {
     }
   }, [queryList]);
 
+  useEffect(() => {
+    if (searchMessage) {
+      if (searchBarInputsRefs.current[selectedSearchBarInputIndex]) {
+        searchBarInputsRefs.current[selectedSearchBarInputIndex].blur();
+      }
+    }
+  }, [searchIsError]);
+
   function handleChangeSearchInput(
     event: ChangeEvent<HTMLInputElement>,
     searchIndex: number
   ) {
-    setSearchBarError('');
+    setSearchMessage('');
+    setSearchIsError(false);
     const searchBarValuesCopy = searchBarValues.slice();
     searchBarValuesCopy[searchIndex] = event.target.value;
     const currentInputValue = searchBarValuesCopy[searchIndex];
@@ -142,7 +165,7 @@ export function SearchBar() {
     const newSearchBarValue = searchBarValuesCopy;
     const newQueryValue = queryCopy;
 
-    setQuery(newQueryValue);
+    setSearchQuery(newQueryValue);
     setSearchBarValues(newSearchBarValue);
 
     setFilterMethodsPopoverActive(false);
@@ -195,7 +218,7 @@ export function SearchBar() {
           event.preventDefault();
           setSearchBarValues(searchBarValuesCopy);
         }
-        setQuery(queryCopy);
+        setSearchQuery(queryCopy);
       }
     }
 
@@ -206,10 +229,11 @@ export function SearchBar() {
         queryCopy[searchIndex].operator
       ) {
         queryCopy[searchIndex + 1] = { description: '' };
-        setQuery(queryCopy);
+        setSearchQuery(queryCopy);
         return;
       }
-      setSearchBarError('Complete a busca anterior para iniciar uma nova.');
+      setSearchMessage('Complete a busca anterior para iniciar uma nova');
+      setSearchIsError(true);
     }
   }
 
@@ -260,7 +284,7 @@ export function SearchBar() {
         ))}
       </div>
 
-      {transition(
+      {filterMethodsPopoverTransition(
         (style, visible) =>
           visible && (
             <animated.div
@@ -274,7 +298,7 @@ export function SearchBar() {
                     key={method.title}
                     className="flex justify-between bg-zinc-900 p-2 w-full rounded-lg transition-colors cursor-pointer hover:bg-background"
                     onClick={() => {
-                      setQuery([
+                      setSearchQuery([
                         ...queryList.slice(0, selectedSearchBarInputIndex),
                         {
                           ...queryList[selectedSearchBarInputIndex],
@@ -301,9 +325,20 @@ export function SearchBar() {
             </animated.div>
           )
       )}
-      <span className="flex justify-center text-sm text-red-500 h-0">
-        {searchBarError}
-      </span>
+      {searchMessageSpanTransition(
+        (style, visible) =>
+          visible && (
+            <animated.span
+              style={style}
+              className={clsx(
+                `flex justify-center text-sm text-zinc-400 h-0 w-full`,
+                { 'text-red-500': searchIsError }
+              )}
+            >
+              {searchMessage}
+            </animated.span>
+          )
+      )}
     </>
   );
 }
