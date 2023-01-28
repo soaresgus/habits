@@ -9,12 +9,14 @@ interface IHabitDayProps {
   amount?: number;
   defaultCompleted?: number;
   date: Date;
+  checked?: boolean;
 }
 
 export function HabitDay({
   amount = 0,
   defaultCompleted = 0,
   date,
+  checked,
 }: IHabitDayProps) {
   const [active, setActive] = useState(false);
   const [completed, setCompleted] = useState(defaultCompleted);
@@ -46,6 +48,7 @@ export function HabitDay({
               completedPercentage >= 60 && completedPercentage < 80,
             'bg-blue-500 border-blue-400': completedPercentage >= 80,
             'border-4': active,
+            'border-green-400 border-4': checked,
           }
         )}
         style={{ borderColor: active ? 'white' : '' }}

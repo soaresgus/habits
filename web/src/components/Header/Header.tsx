@@ -2,7 +2,7 @@ import { Plus, X } from 'phosphor-react';
 import * as Dialog from '@radix-ui/react-dialog';
 import logoSrc from '../../assets/logo.svg';
 import { NewHabitForm } from './NewHabitForm';
-import { SearchBar } from './SearchBar';
+import { SearchBar } from './SearchBar/SearchBar';
 
 export function Header() {
   return (
