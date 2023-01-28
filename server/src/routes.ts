@@ -61,9 +61,10 @@ export async function appRoutes(app: FastifyInstance) {
       },
     });
 
-    const completedHabits = day?.dayHabits.map((dayHabit) => {
-      return dayHabit.habit_id;
-    }) ?? [];
+    const completedHabits =
+      day?.dayHabits.map((dayHabit) => {
+        return dayHabit.habit_id;
+      }) ?? [];
 
     return {
       possibleHabits,
@@ -145,5 +146,41 @@ export async function appRoutes(app: FastifyInstance) {
     `;
 
     return summary;
+  });
+
+  app.get('/search/:name', async (req, res) => {
+    const searchHabitsParams = z.object({
+      name: z.string(),
+    });
+
+    const { name } = searchHabitsParams.parse(req.params);
+
+    const daysWithThisHabit = await prisma.habit.findMany({
+      where: {
+        title: {
+          contains: name,
+        },
+      },
+
+      select: {
+        id: true,
+        title: true,
+        created_at: true,
+        weekDays: {
+          select: {
+            week_day: true,
+          },
+        },
+      },
+    });
+
+    return daysWithThisHabit.map((value) => {
+      return {
+        id: value.id,
+        title: value.title,
+        createdAt: value.created_at,
+        weekDays: value.weekDays.map((weekDay) => weekDay.week_day),
+      };
+    });
   });
 }
