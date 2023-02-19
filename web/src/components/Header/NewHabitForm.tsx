@@ -64,7 +64,7 @@ export function NewHabitForm() {
       <Controller
         name="commitment"
         control={control}
-        rules={{ required: 'Campo obrigatário' }}
+        rules={{ required: 'Campo obrigatório' }}
         render={({ field }) => (
           <Input
             type="text"
@@ -105,7 +105,10 @@ export function NewHabitForm() {
         )}
       >
         {isLoading ? (
-          <div className="border-2 border-l-transparent border-b-transparent border-white rounded-full w-4 h-4 animate-spin" />
+          <div
+            className="border-2 border-l-transparent border-b-transparent border-white rounded-full w-4 h-4 animate-spin"
+            data-testid="submit-loading"
+          />
         ) : (
           <>
             <Check size={20} weight="bold" />
