@@ -1,8 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { Check, CheckCircle } from 'phosphor-react';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { api } from '../../libs/aixos';
+import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { api } from '../../libs/axios';
 import { Checkboxes } from '../General/Checkboxes';
 import { Input } from '../General/Input';
 
@@ -16,35 +18,39 @@ const weekDays = [
   'Sábado',
 ];
 
-interface IFormInputs {
-  commitment: string;
-  weekDays: string[];
-}
+const createNewHabitFormSchema = z.object({
+  title: z
+    .string()
+    .nonempty({ message: 'Campo obrigatório' })
+    .min(3, 'O título deve possuir ao menos 3 letras'),
+  weekDays: z.array(z.number()).min(1, 'Escolha ao menos 1 dia'),
+});
 
-interface INewHabitData {
-  title: string;
-  weekDays: number[];
-}
+type CreateNewHabitFormData = z.infer<typeof createNewHabitFormSchema>;
 
 export function NewHabitForm() {
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm<IFormInputs>();
-
-  const { isLoading, mutateAsync, isSuccess } = useMutation({
-    mutationFn: (data: INewHabitData) => {
-      return api.post<INewHabitData>('/habits', data);
+  const createNewHabitForm = useForm<CreateNewHabitFormData>({
+    resolver: zodResolver(createNewHabitFormSchema),
+    defaultValues: {
+      weekDays: [],
     },
   });
 
-  const onSubmit: SubmitHandler<IFormInputs> = async (data) => {
-    const weekDaysNumbers = data.weekDays
-      .filter((value) => value)
-      .map((day) => weekDays.indexOf(day));
+  const {
+    handleSubmit,
+    formState: { errors },
+  } = createNewHabitForm;
 
-    await mutateAsync({ weekDays: weekDaysNumbers, title: data.commitment });
+  const { isLoading, mutateAsync, isSuccess } = useMutation({
+    mutationFn: (data) => {
+      return api.post<CreateNewHabitFormData>('/habits', data);
+    },
+  });
+
+  const onSubmit: SubmitHandler<CreateNewHabitFormData> = async (data) => {
+    /* await mutateAsync({ weekDays: weekDaysNumbers, title: data.title }); */
+    console.log(data);
+    /*     console.log(weekDaysNumbers); */
   };
 
   if (isSuccess) {
@@ -57,65 +63,63 @@ export function NewHabitForm() {
   }
 
   return (
-    <form
-      className="w-full flex flex-col mt-6"
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <Controller
-        name="commitment"
-        control={control}
-        rules={{ required: 'Campo obrigatório' }}
-        render={({ field }) => (
-          <Input
-            type="text"
-            id="title"
-            placeholder="Ex.: Exercícios, dormir bem, etc..."
-            autoFocus
-            label="Qual seu comprometimento?"
-            labelExtraStyles="font-semibold leading-tight mb-3"
-            {...field}
-          />
-        )}
-      />
-
-      {errors.commitment && (
-        <span className="mt-2 text-red-500">{errors.commitment.message}</span>
-      )}
-
-      <label htmlFor="" className="font-semibold leading-tight mt-4">
-        Qual a recorrência?
-      </label>
-
-      <div className="flex flex-col gap-2 mt-3">
-        <Checkboxes control={control} name="weekDays" options={weekDays} />
-        {errors.weekDays && (
-          <span className="mt-2 text-red-500">{errors.weekDays.message}</span>
-        )}
-      </div>
-
-      <button
-        type="submit"
-        disabled={isLoading}
-        className={clsx(
-          'mt-6 rounded-lg p-4 gap-3 flex items-center justify-center font-semibold bg-green-600 hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-zinc-900 transition-all',
-          {
-            'bg-green-800 hover:bg-green-800 hover:cursor-not-allowed':
-              isLoading,
-          }
-        )}
+    <FormProvider {...createNewHabitForm}>
+      <form
+        className="w-full flex flex-col mt-6"
+        onSubmit={handleSubmit(onSubmit)}
       >
-        {isLoading ? (
-          <div
-            className="border-2 border-l-transparent border-b-transparent border-white rounded-full w-4 h-4 animate-spin"
-            data-testid="submit-loading"
-          />
-        ) : (
-          <>
-            <Check size={20} weight="bold" />
-            <span>Confirmar</span>
-          </>
+        <Input
+          name="title"
+          type="text"
+          placeholder="Ex.: Exercícios, dormir bem, etc..."
+          autoFocus
+          label="Qual seu comprometimento?"
+        />
+
+        {errors.title && (
+          <span className="mt-2 text-red-500">{errors.title.message}</span>
         )}
-      </button>
-    </form>
+
+        <label htmlFor="" className="font-semibold leading-tight mt-4">
+          Qual a recorrência?
+        </label>
+
+        <div className="flex flex-col gap-2 mt-3">
+          <Checkboxes
+            name="weekDays"
+            labels={weekDays}
+            values={weekDays.map((_, index) => index)}
+          />
+
+          {errors.weekDays && (
+            <span className="mt-2 text-red-500">{errors.weekDays.message}</span>
+          )}
+        </div>
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          className={clsx(
+            'mt-6 rounded-lg p-4 gap-3 flex items-center justify-center font-semibold bg-green-600 hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-zinc-900 transition-all',
+            {
+              'bg-green-800 hover:bg-green-800 hover:cursor-not-allowed':
+                isLoading,
+            }
+          )}
+        >
+          {isLoading ? (
+            <div
+              className="border-2 border-l-transparent border-b-transparent border-white rounded-full w-4 h-4 animate-spin"
+              data-testid="submit-loading"
+            />
+          ) : (
+            <>
+              <Check size={20} weight="bold" />
+              <span>Confirmar</span>
+            </>
+          )}
+        </button>
+      </form>
+    </FormProvider>
   );
 }

@@ -12,7 +12,7 @@ import clsx from 'clsx';
 import { SearchBarFiltersMethodsPopover } from './SearchBarFiltersMethodsPopover';
 import { useSearch } from '../../../context/SearchContext/useSearch';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { api } from '../../../libs/aixos';
+import { api } from '../../../libs/axios';
 import dayjs from 'dayjs';
 import { formatDateInPatternDdMm } from '../../../utils/format-date-in-pattern-dd-mm';
 import { ISummaryData } from '../../Summary/SummaryTable';

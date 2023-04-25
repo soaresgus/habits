@@ -1,16 +1,21 @@
 import { useTransition, animated } from '@react-spring/web';
-import { PossibleOperators } from '../../../context/SearchContext/types';
 
-interface ISearchBarFiltersMethodsPopoverProps {
-  active?: boolean;
-  onClickInMethod(operator: PossibleOperators): void;
-}
+type PossibleOperators =
+  | 'name'
+  | 'date'
+  | 'progress'
+  | 'incomplete'
+  | 'complete';
 
 type FilterMethod = {
   title: string;
   operator: PossibleOperators;
   example: string;
 };
+interface ISearchBarFiltersMethodsPopoverProps {
+  active?: boolean;
+  onClickInMethod(operator: PossibleOperators): void;
+}
 
 const filterMethods: FilterMethod[] = [
   {

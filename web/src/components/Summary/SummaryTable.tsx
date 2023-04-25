@@ -4,7 +4,7 @@ import Skeleton from 'react-loading-skeleton';
 import dayjs from 'dayjs';
 import 'react-loading-skeleton/dist/skeleton.css';
 
-import { api } from '../../libs/aixos';
+import { api } from '../../libs/axios';
 import { HabitDay } from './HabitDay';
 import { generateDatesFromYearBeginning } from '../../utils/generate-dates-from-year-beginning';
 import { useSearch } from '../../context/SearchContext/useSearch';

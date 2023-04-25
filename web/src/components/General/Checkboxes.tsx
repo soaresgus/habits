@@ -1,42 +1,37 @@
 import { useState } from 'react';
-import { Control, useController } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { Checkbox } from './Checkbox';
 
 interface ICheckboxesProps {
-  options: string[];
   name: string;
-  control: Control<any>;
+  labels: string[];
+  values: any[];
 }
 
-export function Checkboxes({ options, name, control }: ICheckboxesProps) {
-  const [checkedValues, setCheckedValues] = useState<string[]>([]);
+export function Checkboxes({ name, labels, values }: ICheckboxesProps) {
+  const [checkedValues, setCheckedValues] = useState<any[]>([]);
 
-  const { field } = useController({
-    name,
-    control,
-    rules: { required: 'Escolha ao menos 1 dia' },
-  });
+  const { setValue } = useFormContext();
 
   return (
     <>
-      {options.map((option) => (
+      {values.map((value, index) => (
         <Checkbox
-          key={option}
-          title={option}
+          key={value}
+          title={labels[index]}
+          value={value}
           onCheckedChange={() => {
             let valuesCopy = [...checkedValues];
 
-            if (valuesCopy.includes(option)) {
-              valuesCopy = valuesCopy.filter((value) => value !== option);
+            if (valuesCopy.includes(value)) {
+              valuesCopy = valuesCopy.filter((value) => value !== value);
             } else {
-              valuesCopy = [...valuesCopy, option];
+              valuesCopy = [...valuesCopy, value];
             }
 
             setCheckedValues(valuesCopy);
-
-            field.onChange(valuesCopy);
+            setValue(name, valuesCopy);
           }}
-          value={option}
         />
       ))}
     </>
