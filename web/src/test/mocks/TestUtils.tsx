@@ -1,10 +1,12 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, RenderOptions } from '@testing-library/react';
 
-import { SearchProvider } from '../context/SearchContext';
+import { SearchProvider } from '../../context/SearchContext';
 
 export function AllWrappers({ children }: { children: React.ReactNode }) {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+  });
 
   return (
     <QueryClientProvider client={queryClient}>
